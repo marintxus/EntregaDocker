@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  moodle:
+    build: .
+    ports:
+      - "8082:80"
+    volumes:
+      - ./moodle:/var/www/html
+    environment:
+      MOODLE_DB_HOST: db
+      MOODLE_DB_USER: root
+      MOODLE_DB_PASSWORD: example
+      MOODLE_DB_NAME: moodle_db
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: moodle_db

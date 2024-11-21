@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  web_php:
+    build: .
+    ports:
+      - "8083:80"
+    volumes:
+      - ./web_php:/var/www/html
+    environment:
+      PHP_DB_HOST: db
+      PHP_DB_USER: root
+      PHP_DB_PASSWORD: example
+      PHP_DB_NAME: web_db
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: web_db
