@@ -1,18 +1,37 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  web_php:
-    build: .
-    ports:
-      - "8083:80"
+  web:
+    build:
+      context: .
+    container_name: WebPersonalPHP
     volumes:
-      - ./web_php:/var/www/html
-    environment:
-      PHP_DB_HOST: db
-      PHP_DB_USER: root
-      PHP_DB_PASSWORD: example
-      PHP_DB_NAME: web_db
+      - ./php:/var/www/html
+    ports:
+      - "8083:80"  
+    depends_on:
+      - db
+
   db:
-    image: mariadb
+    image: mariadb:10.4
+    container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: web_db
+      MYSQL_ROOT_PASSWORD: marin          
+      MYSQL_DATABASE: proyectos            
+      MYSQL_USER: marin                  
+      MYSQL_PASSWORD: marin             
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d   
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: db                    
+      PMA_PORT: 3306
+    ports:
+      - "8084:80"                   
+    depends_on:
+      - db

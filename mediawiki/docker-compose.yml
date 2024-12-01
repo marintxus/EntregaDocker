@@ -1,20 +1,26 @@
-version: '3.8'
 services:
   mediawiki:
-    image: mediawiki
-    container_name: mediawiki
+    image: mediawiki:latest
     ports:
-      - "8080:80"
+      - 8082:80
+    environment:
+      MEDIAWIKI_DB_SERVER: "db"
+      MEDIAWIKI_DB_NAME: "mediawiki"
+      MEDIAWIKI_DB_USER: "mediawikiuser"
+      MEDIAWIKI_DB_PASSWORD: "mediapassword"
+    depends_on:
+      - db
     volumes:
-      - ./data:/var/www/html
-    environment:
-      MEDIAWIKI_DB_HOST: db
-      MEDIAWIKI_DB_USER: root
-      MEDIAWIKI_DB_PASSWORD: example
-      MEDIAWIKI_DB_NAME: my_wiki
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php
   db:
-    image: mariadb
-    container_name: mediawiki_db
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: my_wiki
+      MYSQL_ROOT_PASSWORD: "rootpassword"
+      MYSQL_DATABASE: "mediawiki"
+      MYSQL_USER: "marin"
+      MYSQL_PASSWORD: "marin"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

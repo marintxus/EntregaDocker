@@ -1,18 +1,40 @@
-version: '3.8'
 services:
-  moodle:
-    build: .
+  mysql:
+    container_name: moodle_database
+    image: mysql
     ports:
-      - "8082:80"
+      - 8081:3306
+    restart: always
     volumes:
-      - ./moodle:/var/www/html
+      - C:/Moodle/Moodle_db:/var/lib/mysql
+      - C:/Moodle/Moodle_data:/var/www/moodledata
     environment:
-      MOODLE_DB_HOST: db
-      MOODLE_DB_USER: root
-      MOODLE_DB_PASSWORD: example
-      MOODLE_DB_NAME: moodle_db
-  db:
-    image: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: moodle_db
+      MYSQL_ROOT_PASSWORD: $SQL_ROOT_PWD
+      MYSQL_USER: $SQL_USER
+      MYSQL_PASSWORD: $SQL_PASSWD
+      MYSQL_DATABASE: $SQL_DBNAME
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    networks:
+      net: 
+        ipv4_address: 192.168.0.99
+
+  web:
+    build:
+      context: .
+    container_name: moodle_www
+    command: ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+    tty: true
+    ports:
+      - 8081:80
+
+    networks:
+      net:
+        ipv4_address: 192.168.0.100
+
+networks:
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
